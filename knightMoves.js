@@ -2,11 +2,12 @@
 
 class Node {
   constructor([x, y], moves, route) {
-    this.location = [x, y];
+    this.tile = [x, y];
     this.moves = moves;
     this.route = route;
   }
 }
+
 const createGameboard = () => {
   const gameboard = [];
   for (let i = 0; i < 8; i++) {
@@ -18,4 +19,40 @@ const createGameboard = () => {
   return gameboard;
 }
 
-console.log(createGameboard());
+const tileIsInBounds = (tile) => {
+  if (tile[0] > -1 && tile[0] < 8 && tile[1] > -1 && tile[1] < 8) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+const tileIsEmpty = (board, tile) => {
+  const x = tile[0];
+  const y = tile[1];
+  return !board[x][y];
+}
+
+const validMoves = (board, tile) => {
+  let moves = [
+    [tile[0] + 1, tile[1] + 2],
+    [tile[0] + 2, tile[1] + 1],
+    [tile[0] + 2, tile[1] - 1],
+    [tile[0] + 1, tile[1] - 2],
+    [tile[0] - 1, tile[1] - 2],
+    [tile[0] - 2, tile[1] - 1],
+    [tile[0] - 2, tile[1] + 1],
+    [tile[0] - 1, tile[1] + 2]
+  ];
+  let availableMoves = moves.filter((move) => {
+    if (tileIsInBounds(tile) && tileIsInBounds(move) && tileIsEmpty(board, move)) {
+      return move;
+    }
+  })
+  return availableMoves;
+}
+
+let newBoard = createGameboard();
+console.log(newBoard);
+console.log(validMoves(newBoard, [1,2]));
+console.log(validMoves(newBoard, [0,8]));
