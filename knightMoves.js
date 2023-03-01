@@ -30,8 +30,7 @@ const tileIsInBounds = (tile) => {
 const tileIsEmpty = (board, tile) => {
   const x = tile[0];
   const y = tile[1];
-  if (!board[x][y]) return board;
-  
+  return !board[x][y];
 }
 
 const validMoves = (board, tile) => {
@@ -62,24 +61,24 @@ const displayKnightPath = (path) => {
 }
 
 const knightMoves = (startTile, endTile) => {
-  let currentBoard = newGameBoard();
-  let moveQueue = [new Node([startTile[0], startTile[1]], 0, [[startTile[0], startTile[1]]])];
-  while (moveQueue.length > 0) {
-    let currentMove = moveQueue.shift();
-    if (
-      currentMove.tile[0] === endTile[0] && 
+  let currentBoard = newGameBoard(); // Create a new gameboard.
+  let moveQueue = [new Node([startTile[0], startTile[1]], 0, [[startTile[0], startTile[1]]])]; // Initiate a queue containing a node at the starting tile.
+  while (moveQueue.length > 0) { // While the queue is non-empty...
+    let currentMove = moveQueue.shift(); // ...take out the first node and assign it to currentMove (current tile).
+    if ( // If the coordinates of the current tile match the coordinates of the end tile. 
+      currentMove.tile[0] === endTile[0] &&
       currentMove.tile[1] === endTile[1]
     ) {
-      return displayKnightPath(currentMove);
-    } else {
-      let availableTiles = validMoves(currentBoard, currentMove.tile);
-      availableTiles.forEach((tile) => {
-        let nextTile = new Node(
-          [tile[0], tile[1]], 
-          currentMove.moves + 1, 
-          currentMove.path.concat([tile])
+      return displayKnightPath(currentMove); // ... you have reached the end tile. Return this node, which contains information about the number of moves it took to get to the end and a list of all visited tiles.
+    } else { // Else continue traversing the board using breadth-first search.
+      let availableTiles = validMoves(currentBoard, currentMove.tile); // Determine which tiles the knight can move to from its current tile.
+      availableTiles.forEach((tile) => { // For every one of these tiles...
+        let nextTile = new Node( // ...initiate a node at that location with...
+          [tile[0], tile[1]], // the tile on the board it is on [x, y].
+          currentMove.moves + 1, // the number of moves it took to get to that tile.
+          currentMove.path.concat([tile]) // the current tile stored in a list of all tiles visited up to this point.
         );
-        moveQueue.push(nextTile);
+        moveQueue.push(nextTile); // push this node into the queue. This tile's coordinates will be compared to the final tile position. 
       })
     }
   }
